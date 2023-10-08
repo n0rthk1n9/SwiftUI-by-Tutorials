@@ -36,10 +36,18 @@ struct FlightStatusBoard: View {
   var flights: [FlightInformation]
 
   var body: some View {
-    List(flights, id: \.id) { flight in
-      Text(flight.statusBoardName)
+    NavigationStack {
+      List(flights, id: \.id) { flight in
+        NavigationLink(flight.statusBoardName, value: flight)
+      }
+      .navigationDestination(
+        for: FlightInformation.self,
+        destination: { flight in
+          FlightDetails(flight: flight)
+        }
+      )
+      .navigationTitle("Today's Flight Status")
     }
-    .navigationTitle("Today's Flight Status")
   }
 }
 
