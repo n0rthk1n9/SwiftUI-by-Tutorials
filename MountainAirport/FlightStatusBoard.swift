@@ -34,10 +34,16 @@ import SwiftUI
 
 struct FlightStatusBoard: View {
   var flights: [FlightInformation]
+  @State private var hidePast = false
+  var shownFlights: [FlightInformation] {
+    hidePast ?
+      flights.filter { $0.localTime >= Date() } :
+      flights
+  }
 
   var body: some View {
     NavigationStack {
-      List(flights, id: \.id) { flight in
+      List(shownFlights, id: \.id) { flight in
         NavigationLink(flight.statusBoardName, value: flight)
       }
       .navigationDestination(
@@ -47,6 +53,9 @@ struct FlightStatusBoard: View {
         }
       )
       .navigationTitle("Today's Flight Status")
+      .navigationBarItems(
+        trailing: Toggle("Hide Past", isOn: $hidePast)
+      )
     }
   }
 }

@@ -34,6 +34,7 @@ import SwiftUI
 
 enum FlightViewId: CaseIterable {
   case showFlightStatus
+  case showLastFlight
 }
 
 struct ViewButton: Identifiable {
@@ -45,6 +46,7 @@ struct ViewButton: Identifiable {
 struct WelcomeView: View {
   @StateObject var flightInfo = FlightData()
   @State private var selectedView: FlightViewId?
+  @StateObject var lastFlightInfo = FlightNavigationInfo()
 
   var sidebarButtons: [ViewButton] {
     var buttons: [ViewButton] = []
@@ -56,6 +58,19 @@ struct WelcomeView: View {
         subtitle: "Depature and arrival information"
       )
     )
+
+    if
+      let flightId = lastFlightInfo.lastFlightId,
+      let flight = flightInfo.getFlightById(flightId)
+    {
+      buttons.append(
+        ViewButton(
+          id: .showLastFlight,
+          title: "\(flight.flightName)",
+          subtitle: "The Last Flight You Viewed"
+        )
+      )
+    }
 
     return buttons
   }
@@ -75,11 +90,19 @@ struct WelcomeView: View {
         switch view {
         case .showFlightStatus:
           FlightStatusBoard(flights: flightInfo.getDaysFlights(Date()))
+        case .showLastFlight:
+          if
+            let flightId = lastFlightInfo.lastFlightId,
+            let flight = flightInfo.getFlightById(flightId)
+          {
+            FlightDetails(flight: flight)
+          }
         }
       } else {
         Text("Select an option in the sidebar.")
       }
     }
+    .environmentObject(lastFlightInfo)
   }
 }
 
