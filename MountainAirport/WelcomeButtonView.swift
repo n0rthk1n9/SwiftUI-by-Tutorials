@@ -18,10 +18,6 @@
 /// merger, publication, distribution, sublicensing, creation of derivative works,
 /// or sale is expressly withheld.
 ///
-/// This project and source code may use libraries or frameworks that are
-/// released under various Open-Source licenses. Use of those libraries and
-/// frameworks are governed by their own individual licenses.
-///
 /// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 /// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 /// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,59 +28,24 @@
 
 import SwiftUI
 
-enum FlightViewId: CaseIterable {
-  case showFlightStatus
-}
-
-struct ViewButton: Identifiable {
-  var id: FlightViewId
+struct WelcomeButtonView: View {
   var title: String
-  var subtitle: String
-}
-
-struct WelcomeView: View {
-  @StateObject var flightInfo = FlightData()
-  @State private var selectedView: FlightViewId?
-
-  var sidebarButtons: [ViewButton] {
-    var buttons: [ViewButton] = []
-
-    buttons.append(
-      ViewButton(
-        id: .showFlightStatus,
-        title: "Flight Status",
-        subtitle: "Depature and arrival information"
-      )
-    )
-
-    return buttons
-  }
+  var subTitle: String
 
   var body: some View {
-    NavigationSplitView {
-      List(sidebarButtons, selection: $selectedView) { button in
-        WelcomeButtonView(
-          title: button.title,
-          subTitle: button.subtitle
-        )
-      }
-      .listStyle(.plain)
-      .navigationTitle("Mountain Airport")
-    } detail: {
-      if let view = selectedView {
-        switch view {
-        case .showFlightStatus:
-          FlightStatusBoard(flights: flightInfo.getDaysFlights(Date()))
-        }
-      } else {
-        Text("Select an option in the sidebar.")
-      }
-    }
-  }
-}
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    WelcomeView()
+    VStack(alignment: .leading) {
+      Text(title)
+        .font(.title)
+        .foregroundColor(.white)
+      Text(subTitle)
+        .font(.subheadline)
+        .foregroundColor(.white)
+    }.padding()
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(
+        Image("link-pattern")
+          .resizable()
+          .clipped()
+      )
   }
 }
